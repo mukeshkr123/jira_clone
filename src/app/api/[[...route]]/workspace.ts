@@ -5,13 +5,13 @@ import db from "@/db";
 import { workspaces } from "@/db/schema";
 
 const app = new Hono()
-    .post("/", zValidator("json", workspaceSchema), async (c) => {
+    .post("/", zValidator("form", workspaceSchema), async (c) => {
         // add session middleware 
         const user = {
             id: "234343443"
         }
 
-        const { name } = c.req.valid("json")
+        const { name, image } = c.req.valid("form") // TODO: upload image
 
         const workspace = await db.insert(workspaces).values({
             name,

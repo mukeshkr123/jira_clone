@@ -4,7 +4,7 @@ import { InferRequestType, InferResponseType } from "hono";
 import { toast } from "sonner";
 
 type ResponseType = InferResponseType<typeof client.api.workspaces["$post"], 200>;
-type RequestType = InferRequestType<typeof client.api.workspaces["$post"]>["json"];
+type RequestType = InferRequestType<typeof client.api.workspaces["$post"]>["form"];
 
 export const useCreateWorkspace = () => {
     const queryClient = useQueryClient()
@@ -14,8 +14,8 @@ export const useCreateWorkspace = () => {
         RequestType
     >(
         {
-            mutationFn: async (json) => {
-                const response = await client.api.workspaces.$post({ json })
+            mutationFn: async (form) => {
+                const response = await client.api.workspaces.$post({ form })
                 if (!response.ok) {
                     throw new Error("Something went wrong");
                 }
