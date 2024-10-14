@@ -3,6 +3,7 @@ import Link from 'next/link'
 import React from 'react'
 import { Navigation } from './navigation'
 import { Separator } from './ui/separator'
+import { WorkspaceSwitcher } from '@/app/fonts/workspace-switcher'
 
 export const Sidebar = () => {
     return (
@@ -12,6 +13,8 @@ export const Sidebar = () => {
             </Link>
             {/* <DottedSeparator className="my-4" />  */}
             {/* TODO: Remove later */}
+            <Separator className='my-4' />
+            <WorkspaceSwitcher />
             <Separator className='my-4' />
             <Navigation />
         </aside>
