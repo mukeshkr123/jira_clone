@@ -1,13 +1,13 @@
-import { CreateWorkspaceForm } from "@/features/workspaces/components/create-workspace-form";
-import { Button } from "../../components/ui/button";
+import { getWorkspaces } from "@/features/workspaces/actions";
+import { redirect } from "next/navigation";
 
-export default function Home() {
-  return (
-    <div className="bg-neutral-500 p-4 h-full">
-      This is a HomePage
-      <CreateWorkspaceForm
-      // onCancel={() => { }}
-      />
-    </div>
-  );
+export default async function Home() {
+  const workspaces = await getWorkspaces()
+
+  if (workspaces?.length === 0) {
+    redirect("/workspaces/create")
+  } else {
+    redirect(`/workspaces/${workspaces?.[0].id}`)
+  }
+
 }
