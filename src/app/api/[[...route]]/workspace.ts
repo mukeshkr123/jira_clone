@@ -6,6 +6,8 @@ import { members, workspaces } from "@/db/schema";
 import { and, eq } from "drizzle-orm";
 import { generateInviteCode, INVITECODE_LENGTH } from "@/lib/utils";
 
+const imageUrl = "https://images.unsplash.com/photo-1720048169707-a32d6dfca0b3"
+
 const app = new Hono()
     .get("/", async (c) => {
         const results = await db.query.workspaces.findMany()
@@ -34,7 +36,7 @@ const app = new Hono()
         const workspace = await db.insert(workspaces).values({
             name,
             userId: user.id,
-            imageUrl: "https://"
+            imageUrl: imageUrl
         }).returning()
 
         await db.insert(members).values({
@@ -50,10 +52,9 @@ const app = new Hono()
         const { name, image } = c.req.valid("form")
 
         // check this person is exists and admin
-
         const updatedWorkspace = await db.update(workspaces).set({
             name,
-            imageUrl: image ? "https://" : undefined
+            imageUrl: imageUrl
         }).where(eq(workspaces.id, workspaceId)).returning()
 
         // if (!updatedWorkspace) {
@@ -135,7 +136,7 @@ const app = new Hono()
             data: {
                 id: workspace.id,
                 name: workspace.name,
-                imageUrl: workspace.imageUrl,
+                imageUrl: imageUrl,
             },
         });
     })

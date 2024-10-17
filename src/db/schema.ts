@@ -14,6 +14,9 @@ export const workspaces = pgTable("workspaces", {
 })
 
 export const members = pgTable("members", {
+    id: text("id")
+        .primaryKey()
+        .$defaultFn(() => crypto.randomUUID()),
     userId: text("user_id"),
     workspaceId: text("workspace_id"),
     role: rolesEnum().default("MEMBER")
