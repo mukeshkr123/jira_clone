@@ -14,3 +14,5 @@ export function generateInviteCode(length: number) {
   }
   return inviteCode;
 }
+
+export const INVITECODE_LENGTH = 6;

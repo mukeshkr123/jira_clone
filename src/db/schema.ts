@@ -9,6 +9,7 @@ export const workspaces = pgTable("workspaces", {
         .$defaultFn(() => crypto.randomUUID()),
     name: varchar("name", { length: 255 }).notNull(),
     userId: text("user_id").notNull(),
+    imageUrl: text("image_url"),
     inviteCode: text("invite_code").$defaultFn(() => generateInviteCode(10))
 })
 

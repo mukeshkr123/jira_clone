@@ -1,54 +1,64 @@
-import { GoCheckCircle, GoCheckCircleFill, GoHome, GoHomeFill } from "react-icons/go"
-
-import { Settings, SettingsIcon, UsersIcon } from "lucide-react"
-import Link from "next/link"
-import { cn } from "@/lib/utils"
-
-const routes = [
+"use client";
+import Link from "next/link";
+import { Settings, UsersIcon } from "lucide-react";
+import {
+    GoCheckCircle,
+    GoCheckCircleFill,
+    GoHome,
+    GoHomeFill,
+} from "react-icons/go";
+import { cn } from "@/lib/utils";
+import { useWorkspaceId } from "@/features/workspaces/hooks/use-workspace-id";
+import { usePathname } from "next/navigation";
+const router = [
     {
         label: "Home",
         href: "",
         icon: GoHome,
-        activeIcon: GoHomeFill
+        aciveIcon: GoHomeFill,
     },
     {
         label: "My Tasks",
-        href: "/task",
+        href: "/tasks",
         icon: GoCheckCircle,
-        activeIcon: GoCheckCircleFill
-    }, {
+        aciveIcon: GoCheckCircleFill,
+    },
+    {
         label: "Settings",
         href: "/settings",
-        icon: SettingsIcon,
-        activeIcon: SettingsIcon
-    }, {
+        icon: Settings,
+        aciveIcon: Settings,
+    },
+    {
         label: "Members",
         href: "/members",
         icon: UsersIcon,
-        activeIcon: UsersIcon
-    }
-]
-
+        aciveIcon: UsersIcon,
+    },
+];
 export const Navigation = () => {
+    const workspaceId = useWorkspaceId();
+    const pathname = usePathname();
     return (
         <ul className="flex flex-col">
-            {
-                routes.map((item) => {
-                    const isActive = false;
-                    const Icon = isActive ? item.activeIcon : item.icon;
-                    return (
-                        <Link key={item.href} href={item.href}>
-                            <div className={cn(
-                                "flex items-center gap-2.5 p-2.5 rounded-md font-medium hover:text-primary transition text-zinc-500",
+            {router.map(({ aciveIcon, href, icon, label }) => {
+                const absoluteHref = `/workspaces/${workspaceId}${href}`;
+                const isActive = pathname === absoluteHref;
+                const Icon = isActive ? aciveIcon : icon;
+                return (
+                    <Link key={href} href={absoluteHref}>
+                        <div
+                            className={cn(
+                                "flex items-center gap-2.5 p-2.5 rounded-md font-medium hover:text-primary transition text-neutral-500",
                                 isActive && "bg-white shadow-sm hover:opacity-100 text-primary"
-                            )}>
-                                <Icon className="size-5 text-neutral-500" />
-                                {item.label}
-                            </div>
-                        </Link>
-                    )
-                })
-            }
+                            )}
+                        >
+                            <Icon className="size-5 text-neutral-500" />
+                            {label}
+                        </div>
+                    </Link>
+                );
+            })}
         </ul>
-    )
-}
+    );
+};

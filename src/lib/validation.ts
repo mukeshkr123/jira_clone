@@ -7,3 +7,20 @@ export const workspaceSchema = z.object({
         z.string().transform((value) => value === "" ? undefined : value)
     ]).optional(),
 });
+
+export const updateWorkspaceSchema = z.object({
+    name: z
+        .string()
+        .trim()
+        .min(1, { message: "Must be 1 or more characters long" })
+        .optional(),
+    image: z
+        .union([
+            z.instanceof(File),
+            z.string().transform((value) => (value === "" ? undefined : value)),
+        ])
+        .optional(),
+});
+
+export type CreateWorkspaceSchema = z.infer<typeof workspaceSchema>;
+export type UpdateWorkspaceSchema = z.infer<typeof updateWorkspaceSchema>;
