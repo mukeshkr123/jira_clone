@@ -4,16 +4,18 @@ import { Analytics } from "@/components/analytics";
 import { Button } from "@/components/ui/button";
 import { ProjectAvatar } from "@/features/projects/components/project-avatar";
 import { useProjectId } from "@/features/projects/hooks/use-projectId";
+import { useWorkspaceId } from "@/features/workspaces/hooks/use-workspace-id";
 import { Pencil } from "lucide-react";
 import Link from "next/link";
 
 export const ProjectIdClient = () => {
     const projectId = useProjectId();
+    const workspaceId = useWorkspaceId();
 
     const project = {
-        id: "project.id",
+        id: projectId,
         name: "Project Name",
-        workspaceId: "workspace.id",
+        workspaceId: workspaceId,
         imageUrl: "project.imageUrl",
         description: "Project Description",
     }

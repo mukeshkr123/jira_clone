@@ -1,5 +1,6 @@
 "use client"
 
+import { useGetProjects } from '@/features/projects/api/use-get-projects';
 import { ProjectAvatar } from '@/features/projects/components/project-avatar';
 import { useCreateProjectModal } from '@/features/projects/hooks/use-create-project-modal';
 import { useWorkspaceId } from '@/features/workspaces/hooks/use-workspace-id';
@@ -23,6 +24,10 @@ export const Projects = () => {
     const pathname = usePathname();
     const workspaceId = useWorkspaceId();
     const { open } = useCreateProjectModal();
+    const { data } = useGetProjects({ workspaceId });
+
+    console.log("data", data);
+
 
     return (
         <div className="flex flex-col gap-y-2">
@@ -34,7 +39,7 @@ export const Projects = () => {
                 />
             </div>
             {
-                projects?.map((project) => {
+                data?.map((project) => {
                     const href = `/workspaces/${workspaceId}/projects/${project.id}`;
                     const isActive = pathname === href;
                     return (
@@ -45,7 +50,7 @@ export const Projects = () => {
                                     isActive && "bg-white shadow-sm hover:opacity-100 text-primary"
                                 )}
                             >
-                                <ProjectAvatar image={project?.image} name={project?.name} />
+                                <ProjectAvatar image={project?.image || ""} name={project?.name} />
                                 <span className="truncate">{project.name}</span>
                             </div>
                         </Link>

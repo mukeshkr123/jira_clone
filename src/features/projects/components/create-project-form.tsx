@@ -23,8 +23,8 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { useWorkspaceId } from "@/features/workspaces/hooks/use-workspace-id";
 import { cn } from "@/lib/utils";
 import { createProjectSchema, CreateProjectSchema } from "@/lib/validation";
+import { useCreateProject } from "@/features/projects/api/use-create-project";
 
-// import { useCreateProject } from "../api/use-create-project";
 // import { type CreateProjectSchema, createProjectSchema } from "../schemas";
 
 interface CreateProjectFormProps {
@@ -34,7 +34,7 @@ interface CreateProjectFormProps {
 export const CreateProjectForm = ({ onCancel }: CreateProjectFormProps) => {
     const workspaceId = useWorkspaceId();
     const router = useRouter();
-    // const { mutate, isPending } = useCreateProject();
+    const { mutate, isPending } = useCreateProject();
     const inputRef = useRef<HTMLInputElement>(null);
     const form = useForm<CreateProjectSchema>({
         resolver: zodResolver(createProjectSchema.omit({ workspaceId: true })),
@@ -50,15 +50,15 @@ export const CreateProjectForm = ({ onCancel }: CreateProjectFormProps) => {
             image: values.image instanceof File ? values.image : "",
             workspaceId,
         };
-        // mutate(
-        //     { form: finalValues },
-        //     {
-        //         onSuccess: ({ data }) => {
-        //             form.reset();
-        //             router.push(`/workspaces/${workspaceId}/projects/${data.$id}`);
-        //         },
-        //     }
-        // );
+        mutate(
+            { form: finalValues },
+            {
+                onSuccess: ({ data }) => {
+                    form.reset();
+                    router.push(`/workspaces/${workspaceId}/projects/${data.id}`);
+                },
+            }
+        );
     };
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
