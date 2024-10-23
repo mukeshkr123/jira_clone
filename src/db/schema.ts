@@ -21,3 +21,12 @@ export const members = pgTable("members", {
     workspaceId: text("workspace_id"),
     role: rolesEnum().default("MEMBER")
 })
+
+export const projects = pgTable("projects", {
+    id: text("id")
+        .primaryKey()
+        .$defaultFn(() => crypto.randomUUID()),
+    name: varchar("name", { length: 255 }).notNull(),
+    workspaceId: text("workspace_id").notNull(),
+    image: text("image")
+})

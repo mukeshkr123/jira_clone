@@ -6,7 +6,7 @@ import { members, workspaces } from "@/db/schema";
 import { and, eq } from "drizzle-orm";
 import { generateInviteCode, INVITECODE_LENGTH } from "@/lib/utils";
 
-const imageUrl = "https://images.unsplash.com/photo-1720048169707-a32d6dfca0b3"
+export const imageUrl = "https://images.unsplash.com/photo-1720048169707-a32d6dfca0b3"
 
 const app = new Hono()
     .get("/", async (c) => {
