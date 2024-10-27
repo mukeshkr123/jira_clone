@@ -4,6 +4,7 @@ import { Analytics } from "@/components/analytics";
 import { Button } from "@/components/ui/button";
 import { ProjectAvatar } from "@/features/projects/components/project-avatar";
 import { useProjectId } from "@/features/projects/hooks/use-projectId";
+import { TaskViewSwitcher } from "@/features/tasks/components/task-view-switcher";
 import { useWorkspaceId } from "@/features/workspaces/hooks/use-workspace-id";
 import { Pencil } from "lucide-react";
 import Link from "next/link";
@@ -53,7 +54,7 @@ export const ProjectIdClient = () => {
                     </Link>
                 </Button>
             </div>
-            {/* <TaskViewSwitcher hideProjectFilter /> */}
+            <TaskViewSwitcher hideProjectFilter />
             {analytics ? <Analytics data={analytics} /> : null}
 
         </div>
