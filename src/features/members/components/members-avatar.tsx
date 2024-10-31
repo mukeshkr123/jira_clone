@@ -12,6 +12,8 @@ export const MemberAvatar = ({
     className,
     fallbackClassName,
 }: MemberAvatarProps) => {
+    console.log("name", name);
+
     return (
         <Avatar
             className={cn(
@@ -25,7 +27,7 @@ export const MemberAvatar = ({
                     fallbackClassName
                 )}
             >
-                {name.charAt(0).toUpperCase()}
+                {/* {name.charAt(0).toUpperCase()} */}
             </AvatarFallback>
         </Avatar>
     );

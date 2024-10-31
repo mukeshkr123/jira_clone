@@ -10,7 +10,15 @@ const app = new Hono()
         const { workspaceId } = c.req.valid("query");
 
         const results = await db.query.members.findMany({
-            where: eq(members.workspaceId, workspaceId)
+            where: eq(members.workspaceId, workspaceId),
+            with: {
+                user: {
+                    columns: {
+                        email: true,
+                        name: true
+                    }
+                }
+            }
         })
 
         // populate the user TODO:

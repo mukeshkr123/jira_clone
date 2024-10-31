@@ -1,9 +1,12 @@
 import { Button } from '@/components/ui/button'
+import { UserButton } from '@/features/auth/components/user-button'
+import { protectServer } from '@/features/auth/utils'
 import Image from 'next/image'
 import Link from 'next/link'
 import React from 'react'
 
-const StandAlonLayout = ({ children }: { children: React.ReactNode }) => {
+const StandAlonLayout = async ({ children }: { children: React.ReactNode }) => {
+    await protectServer()
     return (
         <main className='bg-neutral-100 min-h-screen'>
             <div className='mx-auto max-w-screen-2xl p-4'>
@@ -16,9 +19,7 @@ const StandAlonLayout = ({ children }: { children: React.ReactNode }) => {
                             width={152}
                         />
                     </Link>
-                    {/* TODO: */}
-                    {/* <UserButton/> */}
-                    <Button>User</Button>
+                    <UserButton />
                 </nav>
                 <div className='flex flex-col items-center justify-center py-4'>{children}</div>
             </div>

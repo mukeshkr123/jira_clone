@@ -1,6 +1,5 @@
 // import { getCurrent } from "@/features/auth/queries";
 import { MembersList } from "@/features/members/components/members-list";
-import { redirect } from "next/navigation";
 
 const MembersPage = async () => {
     // const current = await getCurrent();

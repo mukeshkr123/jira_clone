@@ -28,7 +28,7 @@ const app = new Hono()
 
         // add session middleware 
         const user = {
-            id: "234343443"
+            id: "d0f5c987-0c43-4e04-9067-d25d94af8626"
         }
 
         const { name, image } = c.req.valid("form") // TODO: upload image

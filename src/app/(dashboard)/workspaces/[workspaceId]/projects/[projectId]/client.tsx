@@ -1,25 +1,28 @@
 "use client";
 
 import { Analytics } from "@/components/analytics";
+import { PageError } from "@/components/page-error";
+import { PageLoader } from "@/components/page-loader";
 import { Button } from "@/components/ui/button";
+import { useGetProject } from "@/features/projects/api/use-get-project";
 import { ProjectAvatar } from "@/features/projects/components/project-avatar";
 import { useProjectId } from "@/features/projects/hooks/use-projectId";
 import { TaskViewSwitcher } from "@/features/tasks/components/task-view-switcher";
-import { useWorkspaceId } from "@/features/workspaces/hooks/use-workspace-id";
 import { Pencil } from "lucide-react";
 import Link from "next/link";
 
 export const ProjectIdClient = () => {
     const projectId = useProjectId();
-    const workspaceId = useWorkspaceId();
+    const { data: project, isLoading: projectsLoading } = useGetProject({
+        projectId,
+    });
 
-    const project = {
-        id: projectId,
-        name: "Project Name",
-        workspaceId: workspaceId,
-        imageUrl: "project.imageUrl",
-        description: "Project Description",
-    }
+
+    const isLoading = projectsLoading;
+    // analyticsLoading;
+
+    if (isLoading) return <PageLoader />;
+    if (!project) return <PageError message="Project not found" />;
 
     const analytics = {
         taskCount: 50,
@@ -41,11 +44,11 @@ export const ProjectIdClient = () => {
             <div className="flex items-center justify-between">
                 <div className="flex items-center gap-x-2">
                     <ProjectAvatar
-                        name={"project.name"}
-                        // image={project.imageUrl}
+                        name={project?.name}
+                        image={project?.image || ""}
                         className="size-8"
                     />
-                    <p className="text-lg font-semibold">{"project.name"}</p>
+                    <p className="text-lg font-semibold">{project.name}</p>
                 </div>
                 <Button variant="secondary" size="sm" asChild>
                     <Link href={href}>
@@ -56,7 +59,6 @@ export const ProjectIdClient = () => {
             </div>
             <TaskViewSwitcher hideProjectFilter />
             {analytics ? <Analytics data={analytics} /> : null}
-
         </div>
     )
 }

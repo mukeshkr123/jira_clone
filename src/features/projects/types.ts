@@ -8,7 +8,7 @@ export type Project = {
     position: number;
     dueDate: string;
     description?: string;
-    imageUrl: string;
+    image: string;
 }
 
 export enum TaskStatus {
