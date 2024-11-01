@@ -1,23 +1,31 @@
 import db from "@/db";
-import { members, tasks } from "@/db/schema";
+import { tasks } from "@/db/schema";
 import { TaskStatus } from "@/lib/types";
 import { createTaskSchema } from "@/lib/validation";
 import { zValidator } from "@hono/zod-validator";
-import { and, eq } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { Hono } from "hono";
 import { z } from "zod";
 
-const user = {
-    id: "234343443"
-}
-
 const app = new Hono()
+    .delete("/:taskId", async (c) => {
+        const { taskId } = c.req.param();
+
+
+        await db.delete(tasks).where(eq(tasks.id, taskId));
+
+        return c.json({
+            data: {
+                id: taskId
+            }
+        })
+    })
     .post("/"
         ,
         zValidator("json", createTaskSchema),
         async (c) => {
             const {
-                assigneeId,
+                // assigneeId,
                 dueDate,
                 description,
                 name,
@@ -34,18 +42,20 @@ const app = new Hono()
             // if (!member) {
             //     return c.json({ error: "Unauthorized" }, 401);
             // }
-
+            // add session middleware 
+            const userId = "58f64664-209a-4ec5-8850-5c3d8dc7d627"
             const newPostion = 1
 
             const newTask = await db.insert(tasks).values({
-                assigneeId,
-                dueDate: new Date().toISOString(),
+                assigneeId: userId,
+                dueDate: new Date(dueDate).toISOString(),
                 description,
                 name,
                 projectId,
                 status,
                 position: newPostion,
                 workspaceId: workspaceId,
+
             })
 
             return c.json({ data: newTask })
@@ -67,6 +77,13 @@ const app = new Hono()
             const tasks = await db.query.tasks.findMany({
                 with: {
                     project: {
+                        columns: {
+                            id: true,
+                            name: true,
+                            image: true,
+                        }
+                    },
+                    assignee: {
                         columns: {
                             id: true,
                             name: true,
@@ -106,7 +123,68 @@ const app = new Hono()
 
             return c.json({ data: results });
         })
+    .get("/:taskId", async (c) => {
 
+        const { taskId } = c.req.param();
+        const result = await db.query.tasks.findFirst({
+            where: eq(tasks.id, taskId),
+            with: {
+                project: {
+                    columns: {
+                        id: true,
+                        name: true,
+                        image: true,
+                    },
+                },
+                assignee: {
+                    columns: {
+                        id: true,
+                        name: true,
+                        email: true,
+                    }
+                }
+            }
+        })
 
+        if (!result) {
+            return c.json({ error: "Task not found" }, 404);
+        }
+
+        return c.json({
+            data: result,
+        }, 200);
+    })
+    .patch("/:taskId",
+        zValidator("json", createTaskSchema.partial()),
+        async (c) => {
+            const {
+                name,
+                status,
+                dueDate,
+                projectId,
+                assigneeId,
+                description,
+            } = c.req.valid("json");
+            const { taskId } = c.req.param();
+
+            const updatedTask = await db.update(tasks)
+                .set({
+                    name,
+                    status,
+                    dueDate: dueDate ? new Date(dueDate).toISOString() : undefined,
+                    projectId,
+                    assigneeId,
+                    description,
+                })
+                .where(eq(tasks.id, taskId))
+                .returning();
+
+            if (!updatedTask) {
+                return c.json({ error: "Task not found" }, 404);
+            }
+
+            return c.json({ data: updatedTask[0] });
+        }
+    );
 
 export default app;

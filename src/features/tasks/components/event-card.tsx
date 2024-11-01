@@ -14,7 +14,11 @@ interface EventCardProps {
     title: string;
     project: Project;
     status: TaskStatus;
-    assignee: any;
+    assignee: {
+        id: string;
+        name: string;
+        image: string;
+    };
 }
 const statusColorMap: Record<TaskStatus, string> = {
     [TaskStatus.BACKlOG]: "border-l-pink-500",
@@ -52,7 +56,7 @@ export const EventCard = ({
                 <div className="flex items-center gap-x-1">
                     <MemberAvatar name={assignee?.name} />
                     <div className="dot" />
-                    <ProjectAvatar name={project?.name} image={project?.imageUrl} /> // TODO:
+                    <ProjectAvatar name={project?.name} image={project?.image} />
                 </div>
             </div>
         </div>

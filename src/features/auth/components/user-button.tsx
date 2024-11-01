@@ -18,7 +18,7 @@ export const UserButton = () => {
     }
 
 
-    const name = session.data?.user?.name!;
+    const name = session.data?.user?.name ?? "";
     const imageUrl = session.data?.user?.image;
 
     return (
@@ -33,8 +33,6 @@ export const UserButton = () => {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-60">
                 <DropdownMenuItem
-                    // disabled={mutation.isPending}
-                    // onClick={onClick}
                     className="h-10"
                 >
                     <CreditCard className="size-4 mr-2" />

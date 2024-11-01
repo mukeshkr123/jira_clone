@@ -2,9 +2,10 @@ import { Hono } from "hono";
 import { zValidator } from "@hono/zod-validator"
 import { inviteCodeSchema, updateWorkspaceSchema, workspaceSchema } from "@/lib/validation";
 import db from "@/db";
-import { members, workspaces } from "@/db/schema";
-import { and, eq } from "drizzle-orm";
+import { members, tasks, workspaces } from "@/db/schema";
+import { and, eq, gt, lt } from "drizzle-orm";
 import { generateInviteCode, INVITECODE_LENGTH } from "@/lib/utils";
+import { endOfMonth, startOfMonth, subMonths } from "date-fns";
 
 export const imageUrl = "https://images.unsplash.com/photo-1720048169707-a32d6dfca0b3"
 
@@ -24,14 +25,11 @@ const app = new Hono()
         return c.json({ data: workspace });
     })
     .post("/", zValidator("form", workspaceSchema), async (c) => {
-        console.log("zValidator");
-
-        // add session middleware 
         const user = {
-            id: "d0f5c987-0c43-4e04-9067-d25d94af8626"
+            id: "58f64664-209a-4ec5-8850-5c3d8dc7d627"
         }
 
-        const { name, image } = c.req.valid("form") // TODO: upload image
+        const { name } = c.req.valid("form") // TODO: upload image
 
         const workspace = await db.insert(workspaces).values({
             name,
@@ -49,7 +47,7 @@ const app = new Hono()
     })
     .patch("/:workspaceId", zValidator("form", updateWorkspaceSchema), async (c) => {
         const { workspaceId } = c.req.param();
-        const { name, image } = c.req.valid("form")
+        const { name } = c.req.valid("form")
 
         // check this person is exists and admin
         const updatedWorkspace = await db.update(workspaces).set({
@@ -70,12 +68,10 @@ const app = new Hono()
     })
     .delete("/:workspaceId", async (c) => {
         const { workspaceId } = c.req.param();
-        const workspace = await db.delete(workspaces).where(eq(workspaces.id, workspaceId))
-        return c.json({ data: { $id: workspaceId } });
+        await db.delete(workspaces).where(eq(workspaces.id, workspaceId))
+        return c.json({ data: { id: workspaceId } });
     })
     .post("/:workspaceId/reset-invite-code", async (c) => {
-        console.log("call reset");
-
         const { workspaceId } = c.req.param();
         const workspace = await db.update(workspaces).set({
             inviteCode: generateInviteCode(INVITECODE_LENGTH)
@@ -139,6 +135,85 @@ const app = new Hono()
                 imageUrl: imageUrl,
             },
         });
+    })
+    .get("/:workspaceId/analytics", async (c) => {
+        const { workspaceId } = c.req.param();
+
+        const userId = "58f64664-209a-4ec5-8850-5c3d8dc7d627";
+
+        const member = await db.query.members.findFirst({
+            where: and(eq(members.workspaceId, workspaceId), eq(members.userId, userId))
+        });
+
+        if (!member) {
+            return c.json({ error: "Unauthorized" }, 401);
+        }
+
+        const now = new Date();
+        const thisMonthStart = startOfMonth(now);
+        const thisMonthEnd = endOfMonth(now);
+        const lastMonthStart = startOfMonth(subMonths(now, 1));
+        const lastMonthEnd = endOfMonth(subMonths(now, 1));
+
+
+        // Count tasks for the current and last month
+        const thisMonthTasks = await db.query.tasks.findMany({
+            where: and(
+                eq(tasks.workspaceId, workspaceId),
+                gt(tasks.createdAt, thisMonthStart),
+                lt(tasks.createdAt, thisMonthEnd)
+            )
+        });
+        const lastMonthTasks = await db.query.tasks.findMany({
+            where: and(
+                eq(tasks.workspaceId, workspaceId),
+                gt(tasks.createdAt, lastMonthStart),
+                lt(tasks.createdAt, lastMonthEnd)
+            )
+        });
+
+        const taskCount = thisMonthTasks.length;
+        const taskDiff = taskCount - lastMonthTasks.length;
+
+        // Count assigned tasks
+        const thisMonthAssignedTasks = thisMonthTasks.filter(task => task.assigneeId === userId);
+        const lastMonthAssignedTasks = lastMonthTasks.filter(task => task.assigneeId === userId);
+        const assignedTaskCount = thisMonthAssignedTasks.length;
+        const assignedTaskDiff = assignedTaskCount - lastMonthAssignedTasks.length;
+
+        // Count incomplete tasks
+        const thisMonthIncompleteTasks = thisMonthTasks.filter(task => task.status !== "DONE");
+        const lastMonthIncompleteTasks = lastMonthTasks.filter(task => task.status !== "DONE");
+        const incompleteTaskCount = thisMonthIncompleteTasks.length;
+        const incompleteTaskDiff = incompleteTaskCount - lastMonthIncompleteTasks.length;
+
+        // Count completed tasks
+        const thisMonthCompletedTasks = thisMonthTasks.filter(task => task.status === "DONE");
+        const lastMonthCompletedTasks = lastMonthTasks.filter(task => task.status === "DONE");
+        const completedTaskCount = thisMonthCompletedTasks.length;
+        const completeTaskDiff = completedTaskCount - lastMonthCompletedTasks.length;
+
+        // Count overdue tasks
+        const thisMonthOverdueTasks = thisMonthIncompleteTasks.filter(task => new Date(task.dueDate) < now);
+        const lastMonthOverdueTasks = lastMonthIncompleteTasks.filter(task => new Date(task.dueDate) < now);
+        const overdueTaskCount = thisMonthOverdueTasks.length;
+        const overdueTaskDiff = overdueTaskCount - lastMonthOverdueTasks.length;
+
+        return c.json({
+            data: {
+                taskCount,
+                taskDiff,
+                assignedTaskCount,
+                assignedTaskDiff,
+                incompleteTaskCount,
+                incompleteTaskDiff,
+                completedTaskCount,
+                completeTaskDiff,
+                overdueTaskCount,
+                overdueTaskDiff
+            }
+        });
+
     })
 
 

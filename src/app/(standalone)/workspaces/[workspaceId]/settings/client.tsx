@@ -10,9 +10,6 @@ export const WorkspaceIdSettingsClient = () => {
     const workspaceId = useWorkspaceId();
     const { data: initialValues, isLoading } = useGetWorkspace({ workspaceId });
 
-    console.log(initialValues);
-
-
     if (isLoading) return <PageLoader />;
     if (!initialValues) return <PageError message="Workspace not found" />;
 

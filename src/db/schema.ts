@@ -2,7 +2,6 @@ import { generateInviteCode } from "@/lib/utils";
 import { relations } from "drizzle-orm";
 import { boolean, integer, pgEnum, pgTable, primaryKey, text, timestamp, varchar } from "drizzle-orm/pg-core";
 import type { AdapterAccountType } from "next-auth/adapters"
-import { use } from "react";
 
 
 export const users = pgTable("user", {
@@ -119,7 +118,7 @@ export const members = pgTable("members", {
     role: rolesEnum().default("MEMBER"),
 });
 
-export const memberRelations = relations(members, ({ many, one }) => ({
+export const memberRelations = relations(members, ({ one }) => ({
     workspace: one(workspaces, {
         fields: [members.workspaceId],
         references: [workspaces.id],
@@ -154,15 +153,16 @@ export const tasks = pgTable("tasks", {
         .$defaultFn(() => crypto.randomUUID()),
     name: text("name").notNull(),
     status: text("status").notNull(), // TODO: create enum for status
-    assigneeId: text("assignee_id").notNull(),
+    assigneeId: text("assignee_id").notNull().references(() => users.id),
     workspaceId: text("workspace_id").notNull().references(() => workspaces.id),
     projectId: text("project_id").notNull().references(() => projects.id),
     position: integer("position").notNull(),
     dueDate: text("due_date").notNull(),
     description: text("description"),
+    createdAt: timestamp("created_at").notNull().defaultNow()
 })
 
-export const taskRelation = relations(tasks, ({ many, one }) => (
+export const taskRelation = relations(tasks, ({ one }) => (
     {
         workspace: one(workspaces, {
             fields: [tasks.workspaceId],
@@ -172,5 +172,9 @@ export const taskRelation = relations(tasks, ({ many, one }) => (
             fields: [tasks.projectId],
             references: [projects.id],
         }),
+        assignee: one(users, {
+            fields: [tasks.assigneeId],
+            references: [users.id],
+        })
     }
 ))

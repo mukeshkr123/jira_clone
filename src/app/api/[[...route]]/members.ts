@@ -15,7 +15,8 @@ const app = new Hono()
                 user: {
                     columns: {
                         email: true,
-                        name: true
+                        name: true,
+                        image: true
                     }
                 }
             }

@@ -9,9 +9,9 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useConfirm } from "@/hooks/use-confirm";
 import { useWorkspaceId } from "@/features/workspaces/hooks/use-workspace-id";
+import { useEditTaskModal } from "../hooks/use-update-task-modal";
 
-// import { useDeleteTask } from "../api/use-delete-task";
-// import { useEditTaskModal } from "../hooks/use-update-task-modal";
+import { useDeleteTask } from "../api/use-delete-task";
 interface TaskActionsProps {
     id: string;
     projectId: string;
@@ -21,17 +21,17 @@ interface TaskActionsProps {
 export const TaskActions = ({ children, id, projectId }: TaskActionsProps) => {
     const router = useRouter();
     const workspaceId = useWorkspaceId();
-    // const { open } = useEditTaskModal();
+    const { open } = useEditTaskModal();
     const [ConfirmDialog, confirm] = useConfirm(
         "Delete Task",
         "Are you sure you want to delete this task?",
         "destructive"
     );
-    // const { mutate, isPending } = useDeleteTask();
+    const { mutate, isPending } = useDeleteTask();
     const onDelete = async () => {
         const ok = await confirm();
         if (!ok) return;
-        // mutate({ param: { taskId: id } });
+        mutate({ param: { taskId: id } });
     };
 
     const onOpenTask = () => {
@@ -61,7 +61,7 @@ export const TaskActions = ({ children, id, projectId }: TaskActionsProps) => {
                         Open Project
                     </DropdownMenuItem>
                     <DropdownMenuItem
-                        // onClick={() => open(id)}
+                        onClick={() => open(id)}
                         className="font-medium p-[10px]"
                     >
                         <PencilIcon className="size-5 mr-2 sroke-2" />
@@ -69,7 +69,7 @@ export const TaskActions = ({ children, id, projectId }: TaskActionsProps) => {
                     </DropdownMenuItem>
                     <DropdownMenuItem
                         onClick={onDelete}
-                        // disabled={isPending}
+                        disabled={isPending}
                         className="font-medium p-[10px] text-amber-700 focus:text-amber-700"
                     >
                         <TrashIcon className="size-5 mr-2 sroke-2" />

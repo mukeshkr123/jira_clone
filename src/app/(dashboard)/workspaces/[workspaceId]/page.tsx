@@ -1,8 +1,8 @@
-import React from 'react'
+import { WorkspaceIdClient } from './client'
 
 const WorskpaceIdPage = () => {
     return (
-        <div>WorskpaceIdPage</div>
+        <WorkspaceIdClient />
     )
 }
 

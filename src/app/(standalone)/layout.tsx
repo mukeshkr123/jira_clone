@@ -1,4 +1,3 @@
-import { Button } from '@/components/ui/button'
 import { UserButton } from '@/features/auth/components/user-button'
 import { protectServer } from '@/features/auth/utils'
 import Image from 'next/image'

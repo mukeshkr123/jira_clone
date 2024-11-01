@@ -10,24 +10,12 @@ import { usePathname } from 'next/navigation';
 import React from 'react'
 import { RiAddCircleFill } from 'react-icons/ri';
 
-const imageUrl = "https://images.unsplash.com/photo-1720048169707-a32d6dfca0b3"
-
-const projects = [
-    {
-        id: 1,
-        name: "Project 1",
-        image: imageUrl
-    }
-]
 
 export const Projects = () => {
     const pathname = usePathname();
     const workspaceId = useWorkspaceId();
     const { open } = useCreateProjectModal();
     const { data } = useGetProjects({ workspaceId });
-
-    console.log("data", data);
-
 
     return (
         <div className="flex flex-col gap-y-2">

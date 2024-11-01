@@ -10,8 +10,6 @@ export const imageUrl = "https://images.unsplash.com/photo-1720048169707-a32d6df
 const app = new Hono()
     .get("/", async (c) => {
         const allProjects = await db.query.projects.findMany();
-        console.log("allProjects", allProjects);
-
         return c.json({ data: allProjects });
     })
     .get("/:projectId", async (c) => {
@@ -28,7 +26,7 @@ const app = new Hono()
         return c.json({ data: project });
     })
     .post("/", zValidator("form", createProjectSchema), async (c) => {
-        const { name, image, workspaceId } = c.req.valid("form");
+        const { name, workspaceId } = c.req.valid("form");
 
         const project = await db.insert(projects).values({
             workspaceId: workspaceId,
@@ -40,7 +38,7 @@ const app = new Hono()
     })
     .patch("/:projectId", zValidator("form", updateProjectSchema), async (c) => {
         const { projectId } = c.req.param();
-        const { name, image } = c.req.valid("form");
+        const { name } = c.req.valid("form");
 
         const existingProject = await db.query.projects.findFirst({
             where: eq(projects.id, projectId),

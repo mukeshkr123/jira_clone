@@ -8,18 +8,19 @@ import users from "./users";
 
 export const runtime = "nodejs";
 
-const app = new Hono().basePath("/api")
+const app = new Hono().basePath("/api");
 
-const routes = app
+app
     .route("/workspaces", workspace)
     .route("/members", members)
     .route("/projects", projects)
     .route("/tasks", tasks)
-    .route("/users", users)
+    .route("/users", users);
 
 export const GET = handle(app);
 export const POST = handle(app);
 export const PATCH = handle(app);
 export const DELETE = handle(app);
 
-export type AppType = typeof routes;
+// Define the type based on the `app` instance directly
+export type AppType = ReturnType<typeof app.route>;

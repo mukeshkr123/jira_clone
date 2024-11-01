@@ -4,14 +4,15 @@ import { ArrowUpDown, MoreVerticalIcon } from "lucide-react";
 
 import { snakeCaseToTitleCase } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 
 import { ProjectAvatar } from "@/features/projects/components/project-avatar";
 import { MemberAvatar } from "@/features/members/components/members-avatar";
 
 import { TaskDate } from "./task-date";
 import { Task } from "../types";
-// import { TaskActions } from "./task-actions";
+import { TaskActions } from "./task-actions";
+import { Badge } from "@/components/ui/badge";
+import { TaskStatus } from "@/lib/types";
 
 export const columns: ColumnDef<Task>[] = [
     {
@@ -50,7 +51,7 @@ export const columns: ColumnDef<Task>[] = [
             return (
                 <div className="flex items-center gap-x-2 font-medium">
                     <ProjectAvatar
-                        image={project?.imageUrl}
+                        image={project?.image ?? ""}
                         className="size-6"
                         name={project?.name}
                     />
@@ -73,15 +74,15 @@ export const columns: ColumnDef<Task>[] = [
             );
         },
         cell: ({ row }) => {
-            const assignee = row.original.assigneeId;
             return (
                 <div className="flex items-center gap-x-2 font-medium">
                     <MemberAvatar
                         fallbackClassName="text-xs"
                         className="size-6"
-                        name={assignee.name}
+                        name={row.original.assignee?.name ?? ""}
+                        image={row.original.assignee?.image ?? ""}
                     />
-                    <p className="line-clamp-1">{assignee.name}</p>
+                    <p>{row.original.assignee.name}</p>
                 </div>
             );
         },
@@ -119,22 +120,22 @@ export const columns: ColumnDef<Task>[] = [
         },
         cell: ({ row }) => {
             const status = row.original.status;
-            return <Badge variant={status}>{snakeCaseToTitleCase(status)}</Badge>;
+            return <Badge variant={status as TaskStatus}>{snakeCaseToTitleCase(status)}</Badge>;
         },
     },
     {
         id: "actions",
         cell: ({ row }) => {
             const id = row.original.id;
-            const projectId = row.original.id; // proeject.id 
+            const projectId = row.original.projectId;
             return (
                 <>
 
-                    {/* <TaskActions id={id} projectId={projectId}> */}
-                    <Button variant="ghost" className="size-8 p-0">
-                        <MoreVerticalIcon className="size-4" />
-                    </Button>
-                    {/* </TaskActions > */}
+                    <TaskActions id={id} projectId={projectId}>
+                        <Button variant="ghost" className="size-8 p-0">
+                            <MoreVerticalIcon className="size-4" />
+                        </Button>
+                    </TaskActions >
                 </>
             );
         },

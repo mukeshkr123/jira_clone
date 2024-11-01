@@ -1,5 +1,6 @@
 import React from 'react'
 import { MobileSidebar } from './mobile-sidebar'
+import { UserButton } from '@/features/auth/components/user-button'
 
 export const Navbar = () => {
     return (
@@ -10,7 +11,7 @@ export const Navbar = () => {
                 <p className='text-muted-foreground'>Monitor all of your projects and tasks here</p>
             </div>
             <MobileSidebar />
-            {/* <UserButton/> */}
+            <UserButton />
         </nav>
     )
 }

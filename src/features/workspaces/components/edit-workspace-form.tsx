@@ -107,9 +107,6 @@ export const EditWorkspaceForm = ({
     };
     const absoluteInviteLink = `${window.location.origin}/workspaces/${initialValues.id}/join/${initialValues.inviteCode}`;
 
-    console.log(absoluteInviteLink);
-
-
     return (
         <div className="flex flex-col gap-y-4">
             <DeleteWorkspaceDialog />

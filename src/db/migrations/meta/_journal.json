@@ -8,6 +8,20 @@
       "when": 1730383520812,
       "tag": "0000_exotic_loki",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1730390302525,
+      "tag": "0001_lethal_miss_america",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1730435552177,
+      "tag": "0002_huge_sabra",
+      "breakpoints": true
     }
   ]
 }

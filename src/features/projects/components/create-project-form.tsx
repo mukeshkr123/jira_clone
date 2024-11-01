@@ -137,7 +137,7 @@ export const CreateProjectForm = ({ onCancel }: CreateProjectFormProps) => {
                                                         type="button"
                                                         variant="destructive"
                                                         className="w-fit mt-2"
-                                                        // disabled={isPending}
+                                                        disabled={isPending}
                                                         onClick={() => {
                                                             field.onChange(null);
                                                             if (inputRef.current) inputRef.current.value = "";
@@ -151,7 +151,7 @@ export const CreateProjectForm = ({ onCancel }: CreateProjectFormProps) => {
                                                         type="button"
                                                         variant="teritary"
                                                         className="w-fit mt-2"
-                                                        // disabled={isPending}
+                                                        disabled={isPending}
                                                         onClick={() => inputRef.current?.click()}
                                                     >
                                                         Upload Icon

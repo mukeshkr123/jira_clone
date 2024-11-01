@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { DatePicker } from "@/components/date-picker";
 import {
     Select,
     SelectContent,
@@ -22,16 +23,15 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
-import { useWorkspaceId } from "@/features/workspaces/hooks/use-workspace-id";
 import { ProjectAvatar } from "@/features/projects/components/project-avatar";
 import { MemberAvatar } from "@/features/members/components/members-avatar";
-import { useCreateTask } from "../api/use-create-task";
 import { createTaskSchema, CreateTaskSchema } from "@/lib/validation";
 import { TaskStatus } from "@/lib/types";
-import { DatePicker } from "@/components/date-picker";
+import { Task } from "../types";
 
+import { useUpdateTask } from "../api/use-update-task";
 
-interface CreateTaskFormProps {
+interface EditTaskFormProps {
     onCancel?: () => void;
     projectOptions: {
         id: string;
@@ -42,29 +42,34 @@ interface CreateTaskFormProps {
         id: string;
         name: string;
     }[];
+    initialValues: Task;
 }
 
-export const CreateTaskForm = ({
+export const EditTaskForm = ({
     onCancel,
     memberOptions,
     projectOptions,
-}: CreateTaskFormProps) => {
-    const workspaceId = useWorkspaceId();
-    const { mutate, isPending } = useCreateTask();
+    initialValues,
+}: EditTaskFormProps) => {
+    const { mutate, isPending } = useUpdateTask();
     const form = useForm<CreateTaskSchema>({
-        resolver: zodResolver(createTaskSchema.omit({ workspaceId: true })),
+        resolver: zodResolver(
+            createTaskSchema.omit({ workspaceId: true, description: true })
+        ),
         defaultValues: {
-            workspaceId,
+            ...initialValues,
+            dueDate: initialValues.dueDate
+                ? new Date(initialValues.dueDate)
+                : undefined,
         },
     });
     const onSubmit = (values: CreateTaskSchema) => {
         mutate(
-            { json: { ...values, workspaceId } },
+            { json: values, param: { taskId: initialValues.id } },
             {
                 onSuccess: () => {
                     form.reset();
                     onCancel?.();
-                    // TODO: redirect to new task
                 },
             }
         );
@@ -73,7 +78,7 @@ export const CreateTaskForm = ({
     return (
         <Card className="size-full border-none shadow-none">
             <CardHeader className="flex p-7">
-                <CardTitle className="text-xl font-bold">Create new task</CardTitle>
+                <CardTitle className="text-xl font-bold">Edit a task</CardTitle>
             </CardHeader>
             <div className="px-7">
                 <DottedSeparator />
@@ -130,15 +135,15 @@ export const CreateTaskForm = ({
                                                         <div className="flex items-center gap-x-2">
                                                             <MemberAvatar
                                                                 className="size-6"
-                                                                name={member?.name}
+                                                                name={member.name}
                                                             />
-                                                            {member?.name}
+                                                            {member.name}
                                                         </div>
                                                     </SelectItem>
                                                 ))}
-                                                <FormMessage />
                                             </SelectContent>
                                         </Select>
+                                        <FormMessage />
                                     </FormItem>
                                 )}
                             />
@@ -167,9 +172,9 @@ export const CreateTaskForm = ({
                                                             .replace(/\b\w/g, (char) => char.toUpperCase())}
                                                     </SelectItem>
                                                 ))}
-                                                <FormMessage />
                                             </SelectContent>
                                         </Select>
+                                        <FormMessage />
                                     </FormItem>
                                 )}
                             />
@@ -202,9 +207,9 @@ export const CreateTaskForm = ({
                                                         </div>
                                                     </SelectItem>
                                                 ))}
-                                                <FormMessage />
                                             </SelectContent>
                                         </Select>
+                                        <FormMessage />
                                     </FormItem>
                                 )}
                             />
@@ -221,8 +226,10 @@ export const CreateTaskForm = ({
                             >
                                 Cancel
                             </Button>
-                            <Button disabled={isPending} type="submit" size="lg">
-                                Create Task
+                            <Button
+                                disabled={isPending}
+                                type="submit" size="lg">
+                                Save Changes
                             </Button>
                         </div>
                     </form>
