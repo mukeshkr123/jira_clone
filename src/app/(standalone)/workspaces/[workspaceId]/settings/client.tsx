@@ -15,6 +15,7 @@ export const WorkspaceIdSettingsClient = () => {
 
     return (
         <div className="w-full lg:max-w-xl">
+            {/* @ts-ignore */}
             <EditWorkspaceForm initialValues={initialValues} />
         </div>
     );

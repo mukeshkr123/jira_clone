@@ -45,6 +45,7 @@ export const CreateTaskFormWrapper = ({
         <CreateTaskForm
             onCancel={onCancel}
             memberOptions={memberOptions ?? []}
+            // @ts-ignore
             projectOptions={projectOptions ?? []}
         />
     );

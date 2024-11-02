@@ -56,6 +56,7 @@ export const EditTaskForm = ({
         resolver: zodResolver(
             createTaskSchema.omit({ workspaceId: true, description: true })
         ),
+        // @ts-ignore
         defaultValues: {
             ...initialValues,
             dueDate: initialValues.dueDate

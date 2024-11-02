@@ -40,7 +40,7 @@ export const EditProjectForm = ({ onCancel, initialValues }: EditProjectFormProp
         resolver: zodResolver(updateProjectSchema),
         defaultValues: {
             ...initialValues,
-            image: initialValues.imageUrl ?? "",
+            image: initialValues.image ?? "",
         },
     });
 

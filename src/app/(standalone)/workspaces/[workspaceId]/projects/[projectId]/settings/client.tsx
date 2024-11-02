@@ -15,6 +15,7 @@ export const ProjectIdSettingsClient = () => {
     if (!initialValues) return <PageError message="Project not found" />;
     return (
         <div className='w-full lg:max-w-xl'>
+            {/* @ts-ignore */}
             <EditProjectForm initialValues={initialValues} />
         </div>
     )

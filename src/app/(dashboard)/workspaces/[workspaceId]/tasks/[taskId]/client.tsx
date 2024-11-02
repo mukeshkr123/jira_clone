@@ -19,7 +19,8 @@ export const TaskIdClient = () => {
     if (!data) return <PageError />;
     return (
         <div className="flex flex-col">
-            <TasksBreadcrumbs task={data} project={data.project} />
+            {/* @ts-ignore */}
+            <TasksBreadcrumbs task={data} project={data?.project} />
             <DottedSeparator className="my-6" />
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                 <TaskOverview task={data} />

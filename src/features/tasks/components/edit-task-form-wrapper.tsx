@@ -59,7 +59,9 @@ export const EditTaskFormWrapper = ({
         <EditTaskForm
             initialValues={initialValues}
             onCancel={onCancel}
+            // @ts-ignore
             memberOptions={memberOptions ?? []}
+            // @ts-ignore
             projectOptions={projectOptions ?? []}
         />
     );

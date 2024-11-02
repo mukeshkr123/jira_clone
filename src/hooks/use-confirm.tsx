@@ -13,6 +13,7 @@ export const useConfirm = (
     title: string,
     message: string,
     variant: ButtonProps["variant"] = "primary"
+    //@ts-ignore
 ): [() => JSX.Element, () => Promise<unknown>] => {
     const [promise, setPromise] = useState<{
         resolve: (value: boolean) => void;

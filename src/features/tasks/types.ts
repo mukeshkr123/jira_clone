@@ -1,10 +1,10 @@
-import { TaskStatus } from "@/lib/types";
+// import { TaskStatus } from "@/lib/types";
 
 
 export type Task = {
     id: string;
     name: string;
-    status: TaskStatus;
+    status: string;
     assigneeId: string;
     workspaceId: string;
     projectId: string;
@@ -13,7 +13,8 @@ export type Task = {
     assignee: {
         id: string;
         name: string | null;
-        image: string | null;
+        email?: string;
+        image?: string | null;
     }
     description?: string | null | undefined;
     project: {

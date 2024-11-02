@@ -4,7 +4,22 @@ import { AnalyticsCard } from "./analytics-card";
 import { DottedSeparator } from "./dotted-separator";
 
 
-export const Analytics = ({ data }) => {
+type ProjectAnalyticsResponseType = {
+    taskCount: number;
+    taskDiff: number;
+    assignedTaskCount: number;
+    assignedTaskDiff: number;
+    completedTaskCount: number;
+    completeTaskDiff: number;
+    overdueTaskCount: number;
+    overdueTaskDiff: number;
+    incompleteTaskCount: number;
+    incompleteTaskDiff: number;
+};
+
+export const Analytics = ({ data }: {
+    data: ProjectAnalyticsResponseType
+}) => {
     return (
         <ScrollArea className="border rounded-lg w-full whitespace-nowrap shrink-0">
             <div className="w-full flex flex-row">

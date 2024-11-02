@@ -36,11 +36,11 @@ interface CreateTaskFormProps {
     projectOptions: {
         id: string;
         name: string;
-        imageUrl: string;
+        image?: string;
     }[];
     memberOptions: {
         id: string;
-        name: string;
+        name: string | null | undefined;
     }[];
 }
 
@@ -130,7 +130,7 @@ export const CreateTaskForm = ({
                                                         <div className="flex items-center gap-x-2">
                                                             <MemberAvatar
                                                                 className="size-6"
-                                                                name={member?.name}
+                                                                name={member?.name ?? " "}
                                                             />
                                                             {member?.name}
                                                         </div>
@@ -194,7 +194,7 @@ export const CreateTaskForm = ({
                                                     <SelectItem key={project.id} value={project.id}>
                                                         <div className="flex items-center gap-x-2">
                                                             <ProjectAvatar
-                                                                image={project.imageUrl}
+                                                                image={project.image}
                                                                 className="size-6"
                                                                 name={project.name}
                                                             />

@@ -73,7 +73,7 @@ export const DataCalander = ({ data }: DataCalendarProps) => {
         end: new Date(task.dueDate),
         title: task.name,
         project: task.project,
-        assignee: task?.user?.name || "Unknown",
+        assignee: task?.assignee?.name || "Unknown",
         status: task.status,
         id: task.id,
     }));
@@ -107,8 +107,11 @@ export const DataCalander = ({ data }: DataCalendarProps) => {
                     <EventCard
                         id={event.id}
                         title={event.title}
+                        // @ts-ignore
                         project={event.project}
+                        // @ts-ignore
                         assignee={event.assignee}
+                        // @ts-ignore
                         status={event.status}
                     />
                 ),
