@@ -6,6 +6,7 @@ import { members, tasks, workspaces } from "@/db/schema";
 import { and, eq, gt, lt } from "drizzle-orm";
 import { generateInviteCode, INVITECODE_LENGTH } from "@/lib/utils";
 import { endOfMonth, startOfMonth, subMonths } from "date-fns";
+import { verifyAuth } from "@hono/auth-js";
 
 export const imageUrl = "https://images.unsplash.com/photo-1720048169707-a32d6dfca0b3"
 
@@ -24,27 +25,35 @@ const app = new Hono()
 
         return c.json({ data: workspace });
     })
-    .post("/", zValidator("form", workspaceSchema), async (c) => {
-        const user = {
-            id: "58f64664-209a-4ec5-8850-5c3d8dc7d627"
-        }
+    .post("/",
+        verifyAuth(),
+        zValidator("form", workspaceSchema), async (c) => {
 
-        const { name } = c.req.valid("form") // TODO: upload image
+            const auth = c.get("authUser");
 
-        const workspace = await db.insert(workspaces).values({
-            name,
-            userId: user.id,
-            imageUrl: imageUrl
-        }).returning()
+            if (!auth.token?.id) {
+                return c.json({
+                    error: "Unauthorized",
+                }, 401);
+            }
 
-        await db.insert(members).values({
-            workspaceId: workspace[0].id,
-            userId: user.id,
-            role: "ADMIN"
+
+            const { name } = c.req.valid("form") // TODO: upload image
+
+            const workspace = await db.insert(workspaces).values({
+                name,
+                userId: auth.token.id,
+                imageUrl: imageUrl
+            }).returning()
+
+            await db.insert(members).values({
+                workspaceId: workspace[0].id,
+                userId: auth.token.id,
+                role: "ADMIN"
+            })
+
+            return c.json({ data: workspace[0] })
         })
-
-        return c.json({ data: workspace[0] })
-    })
     .patch("/:workspaceId", zValidator("form", updateWorkspaceSchema), async (c) => {
         const { workspaceId } = c.req.param();
         const { name } = c.req.valid("form")

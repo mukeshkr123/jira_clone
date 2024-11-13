@@ -5,6 +5,8 @@ import { QueryProvider } from "@/components/query-provider";
 import { Toaster } from "@/components/ui/sonner";
 import { SessionProvider } from "next-auth/react";
 import { auth } from "@/auth";
+import { NuqsAdapter } from 'nuqs/adapters/next/app'
+
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -37,7 +39,9 @@ export default async function RootLayout({
         >
           <QueryProvider>
             <Toaster />
-            {children}
+            <NuqsAdapter>
+              {children}
+            </NuqsAdapter>
           </QueryProvider>
         </body>
       </html>

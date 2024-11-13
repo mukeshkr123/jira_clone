@@ -1,20 +1,26 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-// @ts-nocheck
-import { Hono } from "hono";
+import { Context, Hono } from "hono";
 import { handle } from "hono/vercel";
 import members from "./members";
 import workspace from "./workspace";
 import projects from "./projects";
 import tasks from "./tasks";
 import users from "./users";
+import authConfig from "@/auth.config";
+import { AuthConfig, initAuthConfig } from "@hono/auth-js";
 
-type AppEnv = {
-    Params: Record<string, string>;
-};
 
 export const runtime = "nodejs";
 
-const app = new Hono<AppEnv>().basePath("/api");
+function getAuthConfig(c: Context): AuthConfig {
+    return {
+        secret: process.env.AUTH_SECRET,
+        ...authConfig
+    }
+}
+
+const app = new Hono().basePath("/api");
+
+app.use("*", initAuthConfig(getAuthConfig));
 
 const routes = app
     .route("/workspaces", workspace)
