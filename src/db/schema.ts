@@ -115,7 +115,7 @@ export const members = pgTable("members", {
     workspaceId: text("workspace_id").references(() => workspaces.id, {
         onDelete: "cascade",
     }),
-    role: rolesEnum().default("MEMBER"),
+    role: rolesEnum("role").default("MEMBER"),
 });
 
 export const memberRelations = relations(members, ({ one }) => ({
