@@ -6,12 +6,15 @@ import projects from "./projects";
 import tasks from "./tasks";
 import users from "./users";
 import authConfig from "@/auth.config";
+// @ts-ignore
 import { AuthConfig, initAuthConfig } from "@hono/auth-js";
 
 
 export const runtime = "nodejs";
 
+//@ts-ignore
 function getAuthConfig(c: Context): AuthConfig {
+    //@ts-ignore
     return {
         secret: process.env.AUTH_SECRET,
         ...authConfig
