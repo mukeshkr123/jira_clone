@@ -13,6 +13,10 @@ RUN npm install --legacy-peer-deps
 # Copy the rest of the application files
 COPY . .
 
+# Run database migrations before building the application
+RUN npm run db:generate
+RUN npm run db:push
+
 # Build the Next.js application
 RUN npm run build
 
