@@ -37,7 +37,6 @@ const app = new Hono()
                 }, 401);
             }
 
-
             const { name } = c.req.valid("form") // TODO: upload image
 
             const workspace = await db.insert(workspaces).values({
@@ -90,13 +89,23 @@ const app = new Hono()
     })
     .post(
         "/:workspaceId/join",
+        verifyAuth(),
         zValidator("json", inviteCodeSchema),
         async (c) => {
 
             const { workspaceId } = c.req.param();
             const { code } = c.req.valid("json");
 
-            const userId = "23232e3"
+
+            const auth = c.get("authUser")
+
+            if (!auth.token?.id) {
+                return c.json({
+                    error: "Unauthorized",
+                }, 401);
+            }
+
+            const userId = auth.token.id
 
             // check if already member
             const member = await db.query.members.findFirst({
@@ -145,18 +154,18 @@ const app = new Hono()
             },
         });
     })
-    .get("/:workspaceId/analytics", async (c) => {
+    .get("/:workspaceId/analytics", verifyAuth(), async (c) => {
         const { workspaceId } = c.req.param();
 
-        const userId = "58f64664-209a-4ec5-8850-5c3d8dc7d627";
+        const auth = c.get("authUser")
 
-        const member = await db.query.members.findFirst({
-            where: and(eq(members.workspaceId, workspaceId), eq(members.userId, userId))
-        });
-
-        if (!member) {
-            return c.json({ error: "Unauthorized" }, 401);
+        if (!auth.token?.id) {
+            return c.json({
+                error: "Unauthorized",
+            }, 401);
         }
+
+        const userId = auth.token.id;
 
         const now = new Date();
         const thisMonthStart = startOfMonth(now);

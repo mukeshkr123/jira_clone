@@ -57,6 +57,10 @@ export const CreateTaskForm = ({
             workspaceId,
         },
     });
+
+    console.log("member options", memberOptions);
+
+
     const onSubmit = (values: CreateTaskSchema) => {
         mutate(
             { json: { ...values, workspaceId } },

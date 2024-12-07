@@ -5,6 +5,7 @@ import { PageError } from "@/components/page-error";
 import { PageLoader } from "@/components/page-loader";
 import { Button } from "@/components/ui/button";
 import { useGetProject } from "@/features/projects/api/use-get-project";
+import { useGetProjectAnalytics } from "@/features/projects/api/use-get-project-analytics";
 import { ProjectAvatar } from "@/features/projects/components/project-avatar";
 import { useProjectId } from "@/features/projects/hooks/use-projectId";
 import { TaskViewSwitcher } from "@/features/tasks/components/task-view-switcher";
@@ -16,26 +17,14 @@ export const ProjectIdClient = () => {
     const { data: project, isLoading: projectsLoading } = useGetProject({
         projectId,
     });
+    const { data: analytics, isLoading: analyticsLoading } =
+        useGetProjectAnalytics({ projectId });
 
 
     const isLoading = projectsLoading;
-    // analyticsLoading;
 
     if (isLoading) return <PageLoader />;
     if (!project) return <PageError message="Project not found" />;
-
-    const analytics = {
-        taskCount: 50,
-        taskDiff: 5,
-        assignedTaskCount: 30,
-        assignedTaskDiff: 10,
-        completedTaskCount: 20,
-        completeTaskDiff: -2,
-        overdueTaskCount: 3,
-        overdueTaskDiff: 1,
-        incompleteTaskCount: 10,
-        incompleteTaskDiff: -3,
-    };
 
     const href = `/workspaces/${project.workspaceId}/projects/${project.id}/settings`;
 

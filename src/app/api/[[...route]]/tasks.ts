@@ -2,6 +2,7 @@ import db from "@/db";
 import { tasks } from "@/db/schema";
 import { TaskStatus } from "@/lib/types";
 import { createTaskSchema } from "@/lib/validation";
+import { verifyAuth } from "@hono/auth-js";
 import { zValidator } from "@hono/zod-validator";
 import { eq } from "drizzle-orm";
 import { Hono } from "hono";
@@ -21,11 +22,11 @@ const app = new Hono()
         })
     })
     .post("/"
-        ,
+        , verifyAuth(),
         zValidator("json", createTaskSchema),
         async (c) => {
             const {
-                // assigneeId,
+                assigneeId,
                 dueDate,
                 description,
                 name,
@@ -34,16 +35,18 @@ const app = new Hono()
                 workspaceId
             } = c.req.valid("json")
 
-            //  TODO: add check later
-            // const member = await db.query.members.findFirst({
-            //     where: and(eq(members.workspaceId, projectId), eq(members.userId, user.id)),
-            // })
+            // Todo : fix the assigneedId issue and positioning also 
 
-            // if (!member) {
-            //     return c.json({ error: "Unauthorized" }, 401);
-            // }
-            // add session middleware 
-            const userId = "58f64664-209a-4ec5-8850-5c3d8dc7d627"
+            const auth = c.get("authUser")
+
+            if (!auth.token?.id) {
+                return c.json({
+                    error: "Unauthorized",
+                }, 401);
+            }
+
+            const userId = auth.token.id;
+
             const newPostion = 1
 
             const newTask = await db.insert(tasks).values({
